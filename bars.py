@@ -25,7 +25,7 @@ class ShardVis(object):
     def __init__(self, data, infile):
         self.infile = open(str(infile), "r")
         self.number_shards = len(data)
-        self.chunk_size = 64
+        self.chunk_size = 9
         self.updated = -1
 
         self.doccount = []
@@ -51,6 +51,10 @@ class ShardVis(object):
             pos = np.arange(0, -len(shard_data), -1) - .5
             self.artists = plt.barh(pos, [ch.size for ch in shard_data], align='center')
 
+            for artist in self.artists:
+                if artist.get_width() > self.chunk_size:
+                    artist.set_color((1.0, 0.0, 0.0, 0.9))
+
             x = max(max_chunks, 5)
             ax.set_ylim(-1*x, 0)
             ax.set_xlim(0, 10)
@@ -59,7 +63,7 @@ class ShardVis(object):
 
             if shard == self.updated:
                 ax.patch.set_facecolor('red')
-                ax.patch.set_alpha(0.5)
+                ax.patch.set_alpha(0.3)
 
             #self.artists[0].set_color((0.4, 0.2, 0.4))
 
@@ -85,7 +89,7 @@ class ShardVis(object):
 
 
     def _click_next(self, event):
-        for i in xrange(5):
+        for i in xrange(10):
             line = self.infile.readline()
             if not line:
                 print "No more lines!"
