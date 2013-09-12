@@ -1,0 +1,46 @@
+shardkey.py
+===========
+
+Prerequisites:
+--------------
+First, run schema.js to generate the schema collection
+
+1. Run a shell with schema.js loaded 
+e.g. mongo <host>:<port>/<db name> --shell schema.js 
+
+db.<collection>.schema({out: "<collection_schema>"})
+
+e.g. if your collection is named "foobar" then run
+db.foobar.schema({out: "foobar_schema"})
+
+You will also need to install pymongo
+(http://api.mongodb.org/python/current/installation.html)
+
+Usage:
+------
+
+python shardkey.py <db name> <collection name> <server> <port>
+
+e.g. python shardkey.py test twitter localhost 27202
+
+The script will initially scrape the "<collection name>_schema" collection and
+provide you with a list of fields able to be used as a shard key
+
+It will prompt you for the field you wish to use as a shard key, the size of a
+chunk, and the number of shards you wish to have
+
+It will then show you:
+- the distribution of chunks over time
+- the final distribution of chunks per shard
+- the final chunks (minkey, maxkey, number of docs in the chunk)
+
+
+TODO:
+-----
+-Prettier printing OR graphics
+-Turning off balancer (?)
+-Iterating by _id (right now just natural order)
+-Limit number of docs (easy)
+-Cardinality of fields (would require rewriting schema.js)
+-Add command line field for the schema collection (so you can name it whatever
+you want)
