@@ -24,7 +24,13 @@ def do_balance(minshard, maxshard, diff, maxchunks, total):
 	#print shards[minshard]
 	#print shards[maxshard]
 	if (total < 20 and diff > 1) or (total < 80 and diff > 3) or (diff > 7):
-		move = randint(0,maxchunks-1)
+		move = 0
+		while True:
+			chunkno = shards[maxshard][move]
+			if chunks[chunkno]["size"] <= docspers:
+				# not jumbo chunk
+				break
+			move += 1
 		chunkno = shards[maxshard].pop(move)
 		shards[minshard].append(chunkno)
 		chunks[chunkno]["shard"] = minshard

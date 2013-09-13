@@ -116,7 +116,7 @@ class ShardVis(object):
                 self.writecountall += 1
                 self.updateds = sh
                 self.updatedc = [cl]
-                print "add"
+                #print "add"
             elif toks[0] == "split":
                 currsize = self.data[sh][cl].getsize()
                 nsize = int(toks[3])
@@ -128,7 +128,7 @@ class ShardVis(object):
                 self.updatedc.append(n-1)
                 self.writecount[sh] += 1
                 self.writecountall += 1
-                print "split"
+                #print "split"
             elif toks[0] == "move":
                 news = int(toks[3])
                 chunk = self.data[sh].pop(cl)
@@ -140,8 +140,8 @@ class ShardVis(object):
                 self.updateds = news
                 n = len(self.data[news])
                 self.updatedc = [n-1]
-                print "move"
-        self._render()
+                #print "move"
+            self._render()
         
 #        self.number_bars += 1
 #        self.data = random.random(self.number_bars)
