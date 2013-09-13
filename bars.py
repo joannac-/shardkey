@@ -22,13 +22,20 @@ class Chunk(object):
 
 class ShardVis(object):
 
-    def __init__(self, data, infile):
-        self.infile = open(str(infile), "r")
-        self.number_shards = len(data)
-        self.chunk_size = 9
+    def __init__(self, infile):
+        self.infile = open(str(infile), "r").readlines()
+        stats = self.infile.pop()
+        stattoks = stats.split()
+        self.number_shards = int(stattoks[0])
+        self.chunk_size = int(stattoks[1])
         self.updateds = -1
         self.updatedc = []
         self.colormap = plt.get_cmap("Reds")
+
+        self.data = []
+        for i in xrange(self.number_shards):
+            self.data.append([])
+        self.data[0].append(Chunk(0))
 
         self.doccount = []
         for i in xrange(self.number_shards):
@@ -38,8 +45,6 @@ class ShardVis(object):
         for i in xrange(self.number_shards):
             self.writecount.append(0)
         self.writecountall = 0
-
-        self.data = data
 
         self._render()
 
@@ -64,7 +69,7 @@ class ShardVis(object):
 
             x = max(max_chunks, 5)
             ax.set_ylim(-1*x, 0)
-            ax.set_xlim(0, 10)
+            ax.set_xlim(0, self.chunk_size)
             ax.axes.get_xaxis().set_visible(False)
             ax.axes.get_yaxis().set_visible(False)
 
@@ -102,7 +107,7 @@ class ShardVis(object):
 
     def _click_next(self, event):
         for i in xrange(10):
-            line = self.infile.readline()
+            line = self.infile.pop(0)
             if not line:
                 print "No more lines!"
                 return
@@ -159,16 +164,11 @@ class ShardVis(object):
 
 if __name__ == '__main__':
     
-    script, infile, numshards = argv
+    script, infile = argv
     # create data
     #data = [ [Chunk(4), Chunk(7), Chunk(12), Chunk(3), Chunk(8)], [Chunk(6), Chunk(3)] ]
-    data = []
-    for i in xrange(int(numshards)):
-        data.append([])
 
-    data[0].append(Chunk(0))
-
-    shardvis = ShardVis(data, infile)
+    shardvis = ShardVis(infile)
     plt.show()
 
 
