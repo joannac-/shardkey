@@ -26,11 +26,18 @@ class ShardVis(object):
         self.infile = open(str(infile), "r")
         self.number_shards = len(data)
         self.chunk_size = 9
-        self.updated = -1
+        self.updateds = -1
+        self.updatedc = []
+        self.colormap = plt.get_cmap("Reds")
 
         self.doccount = []
         for i in xrange(self.number_shards):
             self.doccount.append(0)
+
+        self.writecount = []
+        for i in xrange(self.number_shards):
+            self.writecount.append(0)
+        self.writecountall = 0
 
         self.data = data
 
@@ -61,18 +68,23 @@ class ShardVis(object):
             ax.axes.get_xaxis().set_visible(False)
             ax.axes.get_yaxis().set_visible(False)
 
-            if shard == self.updated:
-                ax.patch.set_facecolor('red')
-                ax.patch.set_alpha(0.3)
-
-            #self.artists[0].set_color((0.4, 0.2, 0.4))
-
-
-
-        for shard in xrange(self.number_shards):
-            ax = plt.subplot(1, self.number_shards, shard+1)
+            if self.writecountall > 0:
+                col = self.colormap(1.0*self.writecount[shard] / self.writecountall)
+                ax.patch.set_facecolor(col[:3])
+                ax.patch.set_alpha(col[3])
+            else:
+                ax.patch.set_facecolor((1,1,1))
+                ax.patch.set_alpha(1)
+    
+            if shard == self.updateds:
+                for c in self.updatedc:
+                    self.artists[c].set_color((0.0, 1.0, 0.0, 0.9))
+                    
+            
             xcoord = shard/self.number_shards + 0.25
             plt.text(xcoord, 0.195, '#docs = ' + str(self.doccount[shard]))
+
+
 
         # next button
         axes = plt.axes([0.9, 0.025, 0.08, 0.04])
@@ -100,14 +112,22 @@ class ShardVis(object):
             if toks[0] == "add":
                 self.data[sh][cl].incr();
                 self.doccount[sh] += 1
-                self.updated = sh
+                self.writecount[sh] += 1
+                self.writecountall += 1
+                self.updateds = sh
+                self.updatedc = [cl]
                 print "add"
             elif toks[0] == "split":
                 currsize = self.data[sh][cl].getsize()
                 nsize = int(toks[3])
                 self.data[sh][cl].setsize(nsize)
                 self.data[sh].append(Chunk(currsize-nsize))
-                self.updated = sh
+                self.updateds = sh
+                self.updatedc = [cl]
+                n = len(self.data[sh])
+                self.updatedc.append(n-1)
+                self.writecount[sh] += 1
+                self.writecountall += 1
                 print "split"
             elif toks[0] == "move":
                 news = int(toks[3])
@@ -115,9 +135,13 @@ class ShardVis(object):
                 self.data[news].append(chunk)
                 self.doccount[sh] -= chunk.getsize()
                 self.doccount[news] += chunk.getsize()
-                self.updated = news
+                self.writecount[news] += 1
+                self.writecountall += 1
+                self.updateds = news
+                n = len(self.data[news])
+                self.updatedc = [n-1]
                 print "move"
-            self._render()
+        self._render()
         
 #        self.number_bars += 1
 #        self.data = random.random(self.number_bars)
