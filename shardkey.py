@@ -186,7 +186,7 @@ if __name__ == '__main__':
 		if allfields[x]['all'] == numalldocs and 'array' not in allfields[x] and not "$" in x:
 			if 'null' not in allfields[x] or allfields[x]['null'] == 0 :
 				candidates[x] = 1
-				print allfields[x]
+				#print allfields[x]
 				numfields+=1
 			
 	
