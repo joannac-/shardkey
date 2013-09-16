@@ -11,11 +11,13 @@ class ShardSim(object):
 		for i in xrange(len(shards)):
 			if cl in shards[i]:
 				cln = shards[i].index(cl)
+				#write to output file
 				mystr = "add " + str(i) + " " + str(cln) + "\n"
 				output.write(mystr)
 	
 	
 	def getkey(self, doc, shkey):
+		# this is for nested array keys
 		toks = shkey.split(".")
 		result = doc
 		for tok in toks:
@@ -31,12 +33,14 @@ class ShardSim(object):
 			while True:
 				chunkno = shards[maxshard][move]
 				if chunks[chunkno]["size"] <= docspers:
-					# not jumbo chunk
+					# not jumbo chunk, okay to move
 					break
 				move += 1
 			chunkno = shards[maxshard].pop(move)
 			shards[minshard].append(chunkno)
 			chunks[chunkno]["shard"] = minshard
+			
+			#write to output file
 			mystr = "move " + str(maxshard) + " " + str(move) + " " + str(minshard) + "\n"
 			output.write(mystr)
 			
@@ -61,7 +65,7 @@ class ShardSim(object):
 				maxshard = i
 			total_chunks += len(shards[i])
 	
-		diff = maxchunks - minchunks
+		diff = maxchunks - minchunks # difference in size
 		self.do_balance(minshard, maxshard, diff, maxchunks, total_chunks)
 		
 	
@@ -73,27 +77,33 @@ class ShardSim(object):
 		#print chunks[i]["min"],chunks[i]["max"],s,chunks[i]["shard"]
 	
 		if y == chunks[i]["keys"][:]:
-			# 90-10 split
+			# already sorted, monotonically increasing insert, 90-10 split
 			splitpt = int(s * 0.9)
 		else:
-			#50 -50 split
+			#50-50 split
 			splitpt = int(s * 0.5)
 		splitval = y[splitpt]
 		k = y.index(splitval)
 	
 	
-		# k = 0
+		# k = 0, split key = minkey
 		if k == 0:
-			j = s-1
-			if y[j] == splitval:
+			# try the last key
+			if y[s-1] == splitval:
 				# jumbo chunk
 				return
 			else: 
-				k = y.index(y[j])
-				splitval = y[k]
+				# find the first different key
+				for j in xrange(splitpt+1, s):
+					if y[j] != y[splitpt]:
+						break
+				splitval = y[j]
+				k = j
+
 		n = len(chunks)
 		chunks.append({})
 		
+		# new chunk
 		chunks[n]["size"] = s-k
 		chunks[n]["min"] = splitval
 		chunks[n]["max"] = chunks[i]["max"]
@@ -101,6 +111,7 @@ class ShardSim(object):
 		chunks[n]["shard"] = sh
 		chunks[n]["keys"] = y[k:]
 	
+		# old chunk, now smaller
 		chunks[i]["size"] = k
 		chunks[i]["max"] = splitval
 		chunks[i]["keys"] = y[:k]
@@ -109,8 +120,10 @@ class ShardSim(object):
 		#print chunks[n]["min"],chunks[n]["max"],chunks[n]["size"],chunks[n]["shard"]
 		#print ""
 	
+		# add new chunk to shard
 		shards[sh].append(n)
 	
+		# write to output file
 		mystr = "split " + str(sh) + " " + str(shards[sh].index(i)) + " " + str(k) + "\n"
 		output.write(mystr)
 		self.balance()
@@ -173,9 +186,11 @@ if __name__ == '__main__':
 		if allfields[x]['all'] == numalldocs and 'array' not in allfields[x] and not "$" in x:
 			if 'null' not in allfields[x] or allfields[x]['null'] == 0 :
 				candidates[x] = 1
+				print allfields[x]
 				numfields+=1
 			
 	
+	# These are all the fields we can shard on
 	print "\nThere are " + str(numfields) + " candidate fields for shard key:"
 	for x in candidates:
 		print x + ",",
@@ -199,6 +214,7 @@ if __name__ == '__main__':
 		if chunksize == "":
 			chunksize = "67108864"
 	
+	# Chunks should be at least as large as 1 document
 	while int(chunksize) < int(avgdoc):
 		print "Your average doc size is", avgdoc
 		print "Please make your chunk size larger than this"
