@@ -28,20 +28,27 @@ The script will initially scrape the "<collection name>_schema" collection and
 provide you with a list of fields able to be used as a shard key
 
 It will prompt you for the field you wish to use as a shard key, the size of a
-chunk, and the number of shards you wish to have
+chunk, and the number of shards you wish to have.
 
-It will then show you:
-- the distribution of chunks over time
-- the final distribution of chunks per shard
-- the final chunks (minkey, maxkey, number of docs in the chunk)
+The output goes into a file called shard.log -- to visualise the progress of
+chunks please user the visualisation script bars.py as follows:
+
+python bars.py shard.log
+
+Each click of the "next" button steps through 20 steps (add / chunk split /
+chunk migration)
+
+The green chunk is the one affected by the last action.
+
+Red chunks are jumbo chunks.
 
 
 TODO:
 -----
--Prettier printing OR graphics
--Turning off balancer (?)
--Iterating by _id (right now just natural order)
--Limit number of docs (easy)
--Cardinality of fields (would require rewriting schema.js)
--Add command line field for the schema collection (so you can name it whatever
-you want)
+- Turning off balancer
+- Iterating by _id (right now just natural order)
+- Limit number of docs 
+- Cardinality of fields 
+- Refactoring
+- More realistic simulation
+- Multi-field shard keys
