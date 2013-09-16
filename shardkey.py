@@ -282,10 +282,10 @@ if __name__ == '__main__':
 		print len(shards[i]),
 	print ""	
 	
-	print "\n\nThe final chunks"
-	print "#\tmin\tmax\tsize"
-	for i in xrange(len(chunks)):
-		print str(i) + "\t" + str(chunks[i]["min"]) + "\t" +str(chunks[i]["max"]) + "\t" + str(chunks[i]["size"])
+	#print "\n\nThe final chunks"
+	#print "#\tmin\tmax\tsize"
+	#for i in xrange(len(chunks)):
+	#	print str(i) + "\t" + str(chunks[i]["min"]) + "\t" +str(chunks[i]["max"]) + "\t" + str(chunks[i]["size"])
 	
 	mystr = str(len(shards)) + " " + str(docspers) + "\n"
 	output.write(mystr)
