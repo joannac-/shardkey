@@ -96,9 +96,13 @@ class ShardVis(object):
         self.button_next = plt.Button(axes, 'Next')
         self.button_next.on_clicked(self._click_next)
 
+        # next button
+        axes = plt.axes([0.89, 0.025, 0.10, 0.04])
+        self.button_next2 = plt.Button(axes, 'Next x20')
+        self.button_next2.on_clicked(self._click_next2)
 
         # randomize button
-#        axes = plt.axes([0.025, 0.025, 0.1, 0.04])
+#        axes = plt.axes([0.025, 0.025, 0.1, 0.e04])
 #        self.button_randomize = plt.Button(axes, 'Randomize')
 #        self.button_randomize.on_clicked(self._click_randomize)
 
@@ -106,7 +110,6 @@ class ShardVis(object):
 
 
     def _click_next(self, event):
-        for i in xrange(10):
             line = self.infile.pop(0)
             if not line:
                 print "No more lines!"
@@ -147,6 +150,10 @@ class ShardVis(object):
                 self.updatedc = [n-1]
                 #print "move"
             self._render()
+
+    def _click_next2(self, event):
+        for i in xrange(20):
+            self._click_next(event)
         
 #        self.number_bars += 1
 #        self.data = random.random(self.number_bars)
@@ -170,9 +177,3 @@ if __name__ == '__main__':
 
     shardvis = ShardVis(infile)
     plt.show()
-
-
-
-
-
-
