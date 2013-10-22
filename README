@@ -56,4 +56,3 @@ TODO:
 - Multi-field shard keys
 - Read load
 - Labelling chunks with min/max keys
-- Testing commits
