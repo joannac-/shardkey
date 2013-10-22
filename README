@@ -49,6 +49,10 @@ TODO:
 - Iterating by _id (right now just natural order)
 - Limit number of docs 
 - Cardinality of fields 
-- Refactoring
+- Refactoring code
 - More realistic simulation
+-- pre-split chunks
+-- multiple mongoSes
 - Multi-field shard keys
+- Read load
+- Labelling chunks with min/max keys
