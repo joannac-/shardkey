@@ -46,7 +46,7 @@ Red chunks are jumbo chunks.
 TODO:
 -----
 - Turning off balancer
-- Iterating by _id (right now just natural order)
+- ~~Iterating by _id (right now just natural order)~~
 - Limit number of docs 
 - Cardinality of fields 
 - Refactoring code
