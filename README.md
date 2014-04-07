@@ -9,7 +9,7 @@ First, run schema.js to generate the schema collection
 e.g. mongo \<host\>:\<port\>/\<db name\> --shell schema.js 
 
 Then:
-db.<collection>.schema({out: "<collection>_schema"})
+db.\<collection\>.schema({out: "\<collection\>_schema"})
 
 e.g. if your collection is named "foobar" then run
 db.foobar.schema({out: "foobar_schema"})
@@ -20,11 +20,11 @@ You will also need to install pymongo
 Usage:
 ------
 
-python shardkey.py <db name> <collection name> <server> <port>
+python shardkey.py \<db name\> \<collection name\> \<server\> \<port\>
 
 e.g. python shardkey.py test twitter localhost 27202
 
-The script will initially scrape the "<collection name>_schema" collection and
+The script will initially scrape the "\<collection name\>_schema" collection and
 provide you with a list of fields able to be used as a shard key
 
 It will prompt you for the field you wish to use as a shard key, the size of a
