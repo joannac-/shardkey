@@ -6,7 +6,7 @@ Prerequisites:
 First, run schema.js to generate the schema collection
 
 1. Run a shell with schema.js loaded 
-e.g. mongo <host>:<port>/<db name> --shell schema.js 
+e.g. mongo \<host\>:\<port\>/\<db name\> --shell schema.js 
 
 Then:
 db.<collection>.schema({out: "<collection>_schema"})
